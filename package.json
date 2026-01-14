@@ -1,0 +1,27 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "Internal task management dashboard",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "jest",
+    "test:vitest": "vitest"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.1.3",
+    "@reduxjs/toolkit": "^1.9.7",
+    "axios": "^1.6.0",
+    "react-router-dom": "^6.20.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.0",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^14.1.2",
+    "vitest": "^1.0.0"
+  }
+}

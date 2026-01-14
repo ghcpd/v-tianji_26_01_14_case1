@@ -1,0 +1,6 @@
+Prompt
+You are reviewing an existing frontend application codebase as a contributor.
+
+The application works, but it has evolved over time with contributions from different people.
+
+Please review the codebase and share what stands out to you during your review.
