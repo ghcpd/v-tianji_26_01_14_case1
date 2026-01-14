@@ -1,0 +1,87 @@
+User: Prompt
+You are reviewing an existing frontend application codebase as a new contributor.
+
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
+
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
+
+
+GitHub Copilot: I'm going to list focused clarifying questions about the codebase and its conventions so you can point me to areas to investigate next.  
+I'll group them by topic to make review and follow-up easy.## Quick summary ✅
+I will list targeted clarifying questions about the repository so you (or maintainers) can confirm intended behavior, conventions, and edge cases before any changes. Tell me which areas you want me to investigate first.
+
+---
+
+## Project setup & workflow 🔧
+1. Which test runner is considered authoritative here — `vitest` or `jest`? (Both vitest.config.js and jest.config.js exist.)
+2. Is there an expected local development command or environment (e.g. `npm run dev` with specific env vars)? Where are env var names and defaults documented?
+3. Any CI / branching / PR requirements (lint, tests, commit message format) we must follow?
+4. Are there coding style tools (ESLint/Prettier) and rules we must obey? If so, where are configs?
+
+---
+
+## Overall architecture & state management 🧭
+5. Should global app state use Redux (`src/slices/tasksSlice.js`, store.js) for all task data or are some components allowed to keep local state?
+6. What is the authoritative source of truth for tasks — `tasksSlice` or `taskService` (or both)? When should services update Redux vs return raw data?
+7. Expected shape/schema of a task object (fields, optional/required, nested objects)? Any versioning rules?
+8. Are tasks normalized in the store or stored as arrays? Any selectors that callers should use?
+
+---
+
+## API & data flow (services) 🔁
+9. What are the supported API endpoints and expected responses for api.js / `taskService.js` (create, read, update, delete, list, filters)?
+10. How should network errors be surfaced to UI components? (Error objects, status codes, message strings?)
+11. Are optimistic updates used/allowed for create/update/delete operations? If so, what is the rollback strategy?
+12. Authentication/authorization: are API calls expected to include auth headers (token refresh flow, userReducer interaction)?
+
+---
+
+## Components & UI behavior 🎛️
+13. Ownership & responsibilities for `TaskItem`, `TaskList`, `TaskForm`, `TaskDetail`, `Dashboard` — which components are “dumb” presentational vs “smart” containers?
+14. Props contract for `TaskItem` and `TaskForm` — which props are required, and do any components mutate props?
+15. Expected UX around edits/deletes — confirm confirmations, undo, or immediate removal behaviors.
+16. Are components expected to be resilient to missing/null data (defensive checks) or is upstream validation guaranteed?
+
+---
+
+## Styling & CSS 🎨
+17. When should we use `*.module.css` (e.g. `Dashboard.module.css`) vs `index.css` global styles? Any conventions for naming classes?
+18. Are CSS variables / theme tokens used / planned? Any dark-mode or responsive breakpoints to respect?
+19. Are there accessibility/style constraints for UI (font sizes, color contrast)?
+
+---
+
+## Testing strategy & expectations 🧪
+20. What is the intended test coverage target and scope for unit vs integration tests?
+21. Preferred patterns for mocks in tests: mock `taskService` calls, network layer, or use in-memory fixtures? (`setupTests.js` exists — what does it set up?)
+22. Are snapshot tests allowed/encouraged for UI components?
+23. Any end-to-end testing plans or tools expected (Cypress, Playwright)?
+
+---
+
+## Error handling, logging & monitoring ⚠️
+24. Where should client-side errors be reported (console only, remote logging like Sentry)?
+25. What user-facing error messages are required for API failures, validation errors, and network timeouts?
+
+---
+
+## Performance & scale 🚀
+26. Expected/tasked volume (few tasks vs thousands)? Any pagination/virtualization requirements for `TaskList`?
+27. Are there caching or deduplication rules for repeated fetches?
+
+---
+
+## Accessibility & internationalization ♿🌐
+28. Are there a11y standards to follow (ARIA roles, keyboard navigation, screen reader checks)?
+29. Is localization/i18n required or planned (date formats, text strings)?
+
+---
+
+## Conventions, docs & ownership 🗂️
+30. Where should new components, services, or tests be added (folder conventions, naming rules)?
+31. Who owns/maintains major areas (store, API, UI) and who reviews PRs for them?
+32. Are there any hidden or historical constraints (browser support matrix, external integrations) not in the repo?
+
+---
+
+> If you want, I can convert these into a checklist and start checking specific files (e.g. `src/slices/tasksSlice.js`, taskService.js, TaskItem.jsx) to answer or validate any of the above. Which area should I inspect first?
