@@ -1,6 +1,6 @@
 Prompt
-You are reviewing an existing frontend application codebase as a contributor.
+You are reviewing an existing frontend application codebase as a new contributor.
 
-The application works, but it has evolved over time with contributions from different people.
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
 
-Please review the codebase and share what stands out to you during your review.
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
