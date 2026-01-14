@@ -1,0 +1,118 @@
+User: Prompt
+You are reviewing an existing frontend application codebase as a new contributor.
+
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
+
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
+
+
+GitHub Copilot: Let me draft focused clarifying questions to help you understand the codebase; I'll group them by area.## Quick note ✅
+Below are focused clarifying questions I'd ask as a new contributor to understand intended behaviors, conventions, and ambiguous design decisions in this frontend repo.
+
+---
+
+## Project purpose & high-level scope 💡
+- What is the single-source *purpose* of this app and the main user flows we must support first?  
+- Are there any **non-obvious requirements, constraints, or backwards-compatibility promises** we must maintain?
+- Who are the primary stakeholders / owners for features in this repo (who to ask when unsure)?
+
+---
+
+## Architecture & data flow 🔧
+- What is the intended data flow pattern (component state → local store → server)? Any docs describing it?
+- When should state live in Redux (store/slices) vs component state? Any conventions for which slice to use?
+- Are there places where data is expected to be normalized / de-normalized in the store?
+- Do we have global error handling / request lifecycle patterns (loading/error/success state shape expectations)?
+
+---
+
+## State management & store 🧠
+- Why are there both `reducers/` (e.g., `userReducer.js`) and `slices/` (e.g., `tasksSlice.js`)? Is mixing legacy reducers and Redux Toolkit intentional?
+- Are there *naming* and *selector* conventions for slices and selector functions?
+- Any patterns for async actions (thunks/RTK Query/custom middleware)? Which approach is preferred going forward?
+
+---
+
+## API & services (files: `services/api.js`, `services/taskService.js`) 🌐
+- Is there a **standardized API client** (axios/fetch wrapper) in `services/api.js`? What cross-cutting logic must it implement (auth header, retries, timeouts)?
+- How should authentication tokens be stored/renewed (refresh tokens, automatic retry on 401)?
+- What error format does backend send (status codes/body shape)? Any required client-side error mapping?
+- For `taskService.js`: are functions expected to be pure wrappers (no side effects) or include UI-driven side effects (notifications)?
+
+---
+
+## Components, props & UI patterns 🧩
+- Are components split into “presentational” vs “container” or is everything self-contained? Any naming conventions?
+- Are there rules about prop validation (PropTypes) or TypeScript migration plans?
+- Are components expected to be pure and memoized by default for performance (use of React.memo/useCallback)?
+- How are optimistic updates handled for create/update/delete flows (if present)?
+
+---
+
+## Styling & CSS (`index.css`, `Dashboard.module.css`) 🎨
+- When to use CSS modules vs global styles? Any naming conventions or utility classes that must be used?
+- Where are design tokens (colors, spacing, fonts) defined? Any expected approach to theme changes / RTL support?
+- Any accessibility/CSS guidelines we must follow (focus outlines, hover states)?
+
+---
+
+## Testing (files: jest.config.js, vitest.config.js, `setupTests.js`) ✅
+- Why are both Jest and Vitest configs present? Which test runner should contributors use for unit vs integration tests?
+- Test conventions: unit vs integration vs e2e boundaries, mocking strategy for API calls, and preferred test patterns?
+- Are there target coverage thresholds or tests that must be updated with feature changes?
+- How are flaky tests handled and tracked?
+
+---
+
+## Build, tooling & CI (vite.config.js, package.json) 🛠️
+- What are the canonical npm scripts for local dev, build, and prod preview? Any repo-specific environment steps?
+- Are there required Node / npm / OS versions contributors must use (and do we recommend a manager like nvm)?
+- Where is the CI definition? Which linters/types of checks run in CI and must pass before merging?
+
+---
+
+## Conventions: linting, formatting & commits ⚖️
+- Is there a standard linting/formatting setup (ESLint, Prettier) and any custom rules to follow?
+- Any commit message/branch naming/PR review conventions (e.g., commitizen, semantic commits)?
+- Is there a preferred way to document changes (CHANGELOG, release notes)?
+
+---
+
+## Accessibility & internationalization ♿️
+- Are accessibility (a11y) checks enforced or manually validated? Any rules for aria attributes and keyboard behavior?
+- Is i18n expected or planned (dates/text formatting)? Where would translations live?
+
+---
+
+## Observability, errors & analytics 📈
+- Is there centralized logging / Sentry / analytics we must integrate errors or events with? Any naming for events?
+- What is the expected behavior when an unexpected error occurs (error boundary, user messaging, retry)?
+
+---
+
+## Performance & scalability ⚡
+- Any known performance hotspots (large lists like `TaskList`) or rules for virtualization/memoization?
+- Are bundle size limits or code-splitting strategies expected for new features?
+
+---
+
+## Security & environment variables 🔒
+- Which environment variables are required and how are secrets injected in different environments?
+- Any requirements for sanitizing user input or other security practices we must follow?
+
+---
+
+## Onboarding & contribution workflow 🧭
+- For a new contributor: recommended first issues or small tasks to understand the codebase?
+- Who reviews PRs, and are there checklist items to include in PR descriptions?
+
+---
+
+## File-/feature-specific quick questions 🔍
+- `TaskForm.jsx`: expected validation rules and UX for errors? Are there server-side validated fields we must reflect?
+- `TaskItem.jsx` / `TaskList.jsx`: expected behavior for empty states, loading placeholders, and deletion confirmation?
+- `Dashboard.jsx`: are widgets/data refresh cycles supposed to poll, or subscribe to store updates?
+
+---
+
+If you want, I can prioritize these into a short checklist for an initial onboarding PR (small changes to confirm conventions). Would you like that? 💬
