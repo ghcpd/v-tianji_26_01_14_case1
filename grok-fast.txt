@@ -1,0 +1,85 @@
+User: Prompt
+You are reviewing an existing frontend application codebase as a new contributor.
+
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
+
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
+
+
+GitHub Copilot: Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/package.json)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/README.md)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/vite.config.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/vitest.config.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/jest.config.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/main.jsx)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/App.jsx)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/store/store.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/store/slices/tasksSlice.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/store/reducers/userReducer.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/services/taskService.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/services/api.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/Dashboard.jsx#1-1), lines 1 to 50
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/TaskList.jsx)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/TaskItem.jsx#1-1), lines 1 to 50
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/TaskForm.jsx#1-1), lines 1 to 50
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/TaskDetail.jsx)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/__tests__/Dashboard.test.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/components/__tests__/TaskItem.test.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/setupTests.js)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/final_prompt.txt)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/index.html)
+
+Read [](file:///c%3A/Users/v-tianji/Desktop/ghcpd/v-tianji_26_01_14_case1/src/index.css)
+
+As a new contributor reviewing this frontend application codebase, I would ask the following clarifying questions to better understand the intended behavior, best practices, and project conventions before making any changes. These focus on areas that appear inconsistent or undocumented based on the codebase structure and patterns I've observed:
+
+1. **Testing Frameworks**: Why are both Jest and Vitest included as testing frameworks? Is there a preference for using one over the other for different types of tests, or is this a transitional setup?
+
+2. **API Client Consistency**: What is the project's convention for making HTTP requests? Some services use Axios (e.g., in api.js), while others use the native Fetch API (e.g., in taskService.js). Is there a reason for this inconsistency?
+
+3. **State Management Patterns**: Why is there a mix of Redux Toolkit slices (e.g., tasksSlice.js) and plain reducers (e.g., userReducer.js)? What determines when to use one approach versus the other?
+
+4. **Redux Usage in Components**: Why does the `Dashboard` component fetch tasks directly from the API and manage stats in local state, rather than dispatching to Redux like other components (e.g., `TaskList`)? Is Redux intended to be the primary state management solution, or are there cases where local state is preferred?
+
+5. **Local vs. Redux State**: In `TaskList`, why is there both Redux state for tasks and a separate `localTasks` state that mirrors it? What is the intended purpose of maintaining both?
+
+6. **Styling Approaches**: What is the project's convention for component styling? Some components use CSS modules (e.g., `Dashboard.module.css`), while others rely on inline styles. Is there a guideline for when to use each approach?
+
+7. **Error Handling in Redux**: Why does the `tasksSlice` include actions for `setLoading` and `setError`, but these don't appear to be consistently used across components for handling API errors? What is the intended pattern for error management in the Redux store?
+
+8. **User Authentication**: The `userReducer` exists with actions for setting and logging out a user, but it doesn't seem to be integrated into any components or routing. What is the intended behavior for user authentication and authorization in this application?
+
+9. **Service Layer Organization**: Why are there separate service files (api.js and taskService.js) with overlapping functionality? Is taskService.js a legacy file, or do they serve different purposes (e.g., one for CRUD operations and another for specific queries)?
+
+10. **Component State Synchronization**: In `TaskItem`, why is there local state for `isCompleted` that gets updated optimistically before the API call, with rollback on error? Is this the standard pattern for handling asynchronous updates, or should Redux be used for this instead?
+
+11. **Testing Setup**: Why are some tests written with Jest (e.g., Dashboard.test.js) and others with Vitest (e.g., TaskItem.test.js)? What criteria determine which testing framework to use for a given test file?
+
+12. **Project Documentation**: The README mentions that "different parts of the codebase use different patterns or libraries" intentionally based on implementation timing, but doesn't specify what those patterns are. Are there any internal guidelines or decision records that explain these choices?
+
+13. **Environment Configuration**: What is the expected setup for `REACT_APP_API_URL`? Is there a development server or mock API that contributors should be aware of for local development?
+
+14. **Routing and Navigation**: The app has routes for tasks, but no visible navigation components (e.g., links or menus). Is navigation handled externally, or is there an intended pattern for in-app navigation that isn't implemented yet?
+
+15. **Data Flow for Task Updates**: When a task is updated (e.g., in `TaskItem`), it calls the API and then dispatches to Redux. Is there a reason not to use Redux Toolkit's async thunks or createAsyncThunk for handling these side effects directly in the slice?
