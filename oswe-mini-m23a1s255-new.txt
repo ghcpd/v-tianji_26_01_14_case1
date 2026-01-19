@@ -1,0 +1,181 @@
+User: Prompt
+You are reviewing an existing frontend application codebase as a new contributor.
+
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
+
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
+
+
+GitHub Copilot: Let me quickly summarize: this is a Vite + React frontend with Redux slices, service modules and unit tests, and you want clarifying questions (not fixes).  
+I'll produce concise, prioritized questions grouped by area so you can answer what's important first. My next step is to list high‑priority questions followed by lower‑priority / optional clarifications.## Snapshot — what I looked at
+Briefly: this looks like a Vite + React app (no TypeScript), Redux slice(s) in `src/slices`, API clients in services, components under components, and both jest.config.js + vitest.config.js present. Below are focused clarifying questions (no solutions) grouped and prioritized so you can tell me which answers to fetch or act on first. ✅
+
+---
+
+## High‑priority questions (answer these before making behavioral or state changes) ✅
+1. Tests / runner
+   - Which test runner is authoritative for this repo: `jest` or `vitest`? (Both configs present: jest.config.js, vitest.config.js; `setupTests.js` exists.)
+   - Are there any flaky tests or known failing suites I should avoid touching? Where is that documented?
+2. API contract & error shapes
+   - What is the exact contract for the backend endpoints used by api.js / `taskService.js` (field names, types, pagination, status codes, error payloads)?
+   - Which fields are guaranteed (e.g., `id`, `createdAt`, `status`) and which can be missing/null?
+3. State & concurrency
+   - Intended behavior for concurrent updates to tasks (optimistic updates, last-write-wins, server source-of-truth)?
+   - Which slice is the canonical source for task data — `src/slices/tasksSlice.js` or results from `taskService.js`? (When should components call the service directly vs read from store?)
+4. Required UX/edge cases
+   - Expected behavior for empty states, network errors, and offline usage (e.g., `TaskList` empty vs error view)?
+   - Acceptance criteria for creating/editing/deleting tasks (validation rules, success/failure flows).
+
+---
+
+## Architecture & data‑flow questions
+1. App boundaries
+   - Which parts of the app are considered “business logic” vs “presentational”? (Which components should be pure/UI-only?)
+2. Data normalization
+   - Are tasks intended to be normalized in the store (by id) or stored as arrays? Any rationale in code/comments?
+3. Caching / refresh policy
+   - How often should task lists refresh? Any stale-while-revalidate or polling expectations?
+4. Server-side considerations
+   - Any server constraints (rate limits, batching, max page size) that front-end must respect?
+
+Files to check / reference: store.js, `src/slices/tasksSlice.js`, taskService.js
+
+---
+
+## State management & Redux conventions
+1. Slice responsibilities
+   - What belongs in a slice reducer vs an external service/helper? (E.g., should API errors be handled in the slice or at call site?)
+2. Async patterns
+   - Preferred pattern for async: thunks, RTK Query, or custom middleware? Is there an intended migration?
+3. IDs & typing
+   - Are IDs numeric or strings (UUID)? Any collision/formatting expectations?
+4. Testing state
+   - Preferred way to test components that read from the store — wrap with real store or use mocked selectors?
+
+Files: `src/slices/tasksSlice.js`, `src/reducers/userReducer.js`, store.js
+
+---
+
+## API & services
+1. Separation of concerns
+   - Purpose distinction between api.js and taskService.js (low-level HTTP wrapper vs domain-specific methods)?
+2. Error-handling policy
+   - Should services throw, return structured errors, or resolve with an envelope `{ ok, data, error }`?
+3. Mocking & fixtures
+   - Where should new API mocks/fixtures live for tests (existing pattern/location)?
+4. Environment endpoints
+   - Where are dev/staging/prod API URLs defined? Any per-environment behavior to be aware of?
+
+Files: api.js, taskService.js, package.json (scripts)
+
+---
+
+## Components, props & responsibilities
+1. Component boundaries
+   - Which components are “smart” vs “dumb”? (Examples: is `TaskItem.jsx` responsible for dispatching actions or purely presentational?)
+2. Props contracts
+   - Are there documented prop shape expectations (nullable fields, optional callbacks) for `TaskForm`, `TaskItem`, and `TaskDetail`?
+3. Reusability & composition
+   - Any conventions for creating shared UI primitives vs colocating logic in feature folders?
+4. Accessibility expectations
+   - Required keyboard interactions and ARIA roles for task controls (drag/drop, inline edit, checkboxes)?
+
+Files: TaskItem.jsx, `TaskForm.jsx`, `TaskList.jsx`, `TaskDetail.jsx`
+
+---
+
+## Styling & design system
+1. CSS approach
+   - Preferred styling method: CSS Modules (`*.module.css`), global CSS, CSS variables, or a design system? (Repo has `Dashboard.module.css` + `index.css`.)
+2. Class naming / scoping rules
+   - Any conventions (BEM, utility classes, theme tokens)?
+3. Responsive breakpoints & design tokens
+   - Are breakpoints and spacing tokens centralized somewhere?
+4. Visual regression
+   - Do we use visual regression tests or a style guide (Storybook)? If not, are there manual QA steps required?
+
+Files: Dashboard.module.css, index.css
+
+---
+
+## Testing, coverage & quality
+1. Which tests to prefer
+   - Unit vs integration vs DOM-level tests — where should new work be covered?
+2. Test utilities
+   - Preferred helpers for rendering and mocking (already in `setupTests.js`)? Any in-house wrappers?
+3. Coverage thresholds
+   - Is there a minimum coverage requirement for PRs? Which areas are trusted to be lower coverage?
+4. CI test matrix
+   - Which tests run in CI and when (unit on PR, integration on merge, etc.)?
+
+Files: setupTests.js, `src/__tests__/**`, jest.config.js, vitest.config.js
+
+---
+
+## Build, config & CI/CD
+1. Multiple configs
+   - Why are both jest.config.js and vitest.config.js present? Which is maintained?
+2. Build targets & browsers
+   - Supported browsers / minimum supported versions and any special polyfills required?
+3. Release / deploy process
+   - How are releases deployed (Netlify/Vercel/GHA)? Any required build-time env vars or secrets?
+4. Local dev
+   - Recommended local dev workflow and scripts to run for end-to-end manual checks?
+
+Files: vite.config.js, package.json, README.md
+
+---
+
+## Developer conventions & DX
+1. Formatting & linting
+   - Preferred linters/formatters and commit hooks (I don't see `.eslintrc` or Prettier configs) — what should new code follow?
+2. Branching & PR rules
+   - Required checks, PR template, and approval rules (e.g., number of reviewers, changelog entry)?
+3. When to introduce new dependencies
+   - Any policy about adding large libs (bundle-size limits, approval process)?
+4. Onboarding
+   - Recommended “first good issue” for new contributors and contact person(s)/owners for quick questions?
+
+Files to check: README.md, repo settings (not in workspace)
+
+---
+
+## Accessibility, security & performance
+1. Accessibility (a11y)
+   - Any a11y audit history or required standards (WCAG level target)?
+2. Security
+   - Client-side security expectations (CSP, handling secrets, sanitization of task content)?
+3. Performance targets
+   - Known performance concerns (large lists, re-render hotspots) and acceptable metrics (TTI, bundle size)?
+4. Analytics / telemetry
+   - Are there analytics events tracked for task interactions? Naming conventions / privacy constraints?
+
+---
+
+## Ownership, roadmap & constraints
+1. Product intent
+   - High-level goal of the app and main user flows that must not be regressed (critical paths).
+2. Roadmap / upcoming breaking changes
+   - Any planned refactors (TypeScript migration, new state layer) that would affect how I should structure contributions?
+3. Known technical debt
+   - Areas intentionally left as TODO or where tradeoffs were accepted (list them if possible).
+4. Priority areas for contributors
+   - Bugs vs features vs tests — which should contributors focus on first?
+
+---
+
+## Quick "answers I need first" (suggested minimal set)
+1. Which test runner to use (Jest or Vitest)?  
+2. API contract (task fields + error shape) used by `taskService.js`.  
+3. Expected optimistic / conflict resolution behavior for task updates.  
+4. Where to find CI requirements and branch/PR rules.
+
+> If you can answer those four, I can start drafting targeted PRs or fixes without guessing behavior. 🔧
+
+---
+
+## Final / next steps
+- Tell me which 3 questions above you want answered first (or point me to any internal docs/owners).  
+- I can then open a short PR checklist for new contributors or prepare a small "get‑started" doc with the confirmed conventions.
+
+If you want, I can also convert these into a checklist you can attach to new issues or PR templates.
