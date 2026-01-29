@@ -1,0 +1,51 @@
+User: Prompt
+You are reviewing an existing frontend application codebase as a new contributor.
+
+The application works, but it has evolved over time with contributions from different people, and some decisions, patterns, or configurations are unclear or undocumented.
+
+As a contributor trying to understand the codebase before making any changes, list the clarifying questions you would ask. Focus on areas where the intended behavior, best practices, or project conventions are uncertain, rather than proposing solutions or fixes.
+
+
+GitHub Copilot: Perfect — I'll list concise clarifying questions about the repo so you can decide what to ask the team next. I'll focus on behaviors, conventions, and areas that look inconsistent or undocumented.
+
+## Project / tooling
+- Which test runner should contributors use: `jest` (there's jest.config.js) or `vitest` (there's vitest.config.js)? Is there a preferred command in package.json?
+- Is there a CI pipeline or required checks (lint, tests, type checks) we must satisfy before merging?
+- Are there project-wide linting/formatting rules (ESLint / Prettier) or commit message conventions we should follow?
+
+## Architecture & state
+- I see tasksSlice.js and userReducer.js — is mixing Redux Toolkit slices and classic reducers intentional? What's the guideline for adding new state (slice vs reducer)?
+- Are there conventions for where to place selectors, async thunks, and side effects (e.g., inside slice files vs `services/`)?
+- Any expectations about state normalization, immutability, or optimistic updates for task actions?
+
+## API & services
+- What's the canonical contract for the backend (base URL, error shape, fields)? Can you point to API docs or example responses?
+- api.js vs taskService.js — which layer owns request-level concerns (auth headers, retries, cancellation)?
+- How should authentication / authorization be handled (tokens, refresh flows)? Is there a mock/dev API used locally?
+
+## Components & UI
+- Component responsibilities: are `TaskItem`, `TaskForm`, `TaskDetail`, and `TaskList` intended to be presentational-only or to contain logic/state? Any pattern preference (hooks, container components)?
+- Are there accessibility requirements or keyboard interactions we must support for tasks (focus management, ARIA)?
+- Is there a shared design system or style tokens, or should new components use local CSS modules like `Dashboard.module.css`?
+
+## Forms, validation & error handling
+- Where should form validation live (inside `TaskForm` or a shared util)? Are there UX guidelines for inline errors vs toasts?
+- Is there a global error/notification mechanism, or should components render their own error states?
+
+## Tests
+- Test scope: do we aim for unit-only tests (components + reducers) or also integration/e2e? How should API calls be mocked in tests (`msw`, jest mocks, etc.)?
+- Are there coverage thresholds or files to prioritize for tests (e.g., __tests__)?
+
+## Styling & assets
+- Project styling approach: mix of `index.css` + CSS modules — any guideline for when to use global vs module styles?
+- Browser support and responsive breakpoints to consider when building UIs?
+
+## Repository & maintenance
+- Any known technical debt, TODOs, or fragile areas to avoid touching (searchable notes in the codebase)?
+- Preferred branching / PR process and review expectations (labels, reviewers, changelog entries)?
+
+## Domain / data questions (tasks)
+- What are the required and optional fields of a "task"? Are there business rules (status transitions, ownership, due-date behavior) that tests should assert?
+- Any concurrency rules (e.g., conflict resolution when multiple users update tasks)?
+
+If you want, I can open specific files (`tasksSlice.js`, `api.js`, `TaskForm.jsx`, tests) and point out exact spots that look ambiguous. ✅
